@@ -3,6 +3,7 @@ import time
 
 class GameSystem:
     def __init__(self):
+    # Initializes the game system, sets up the display, background, buttons, and other necessary attributes.
         pygame.init()
         self.screen_width = 600
         self.screen_height = 500
@@ -19,6 +20,7 @@ class GameSystem:
         self.start_time = None
 
     def main(self):
+    # Main loop of the game system, handles events, draws buttons and background, and updates the display
         self.running = True
         while self.running:
             for event in pygame.event.get():
@@ -47,6 +49,9 @@ class GameSystem:
             self.clock.tick(60)
 
     def start_game(self):
+    # Initiates the game
+    # sets up platforms, a door, and the player character
+    # starts the game loop
         self.running = False
         g = Game()
         platform1 = PlatformSprite(g, "platform1.png", 0, 480, 100, 10)  
@@ -72,6 +77,8 @@ class GameSystem:
 
 class Game:
     def __init__(self):
+    # initializes the game by setting up the game window, background, clock, and other necessary attributes
+    # loads the background image, sets the window dimensions, and creates a Pygame display surface
         pygame.init()
         self.screen_width = 600
         self.screen_height = 500
@@ -87,6 +94,9 @@ class Game:
         self.start_time = time.time()
 
     def main_loop(self):
+    # handles game events such as quitting and updates the game sprites' positions and states
+    # renders the game environment by blitting the background image and all sprites onto the screen
+    # updates the display, and controls the frame rate, limiting it to 60 frames per second
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -114,20 +124,27 @@ class Game:
             self.clock.tick(60)
 
     def update_timer(self):
+    # calculates and displays the elapsed time since the game started
         current_time = int(time.time() - self.start_time)
         font = pygame.font.Font(None, 36)
         timer_text = font.render(f"Time: {current_time}s", True, (255, 255, 255))
         self.screen.blit(timer_text, (self.screen_width - 150, 20))
 
 class Coords:
+# Represents the coordinates of an object with x and y coordinates
     def __init__(self, x1=0, y1=0, x2=0, y2=0):
+    # Initializes the Coords object with optional parameters for coordinates
         self.x1 = x1
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
 
 class Sprite:
+# Base class for all sprites in the game
+# Contains methods for movement and collision detection
     def __init__(self, game):
+    # Initializes the Sprite object with a reference to the game instance
+    # Sets up attributes related to sprite movement and collision detection
         self.game = game
         self.endgame = False
         self.coordinates = None
@@ -139,7 +156,11 @@ class Sprite:
         return self.coordinates
 
 class StickFigureSprite(Sprite):
+# Subclass of Sprite representing the player character in the game
+# Contains methods for movement (turning left/right, jumping), animation, and collision detection
     def __init__(self, game):
+    # Initializes the StickFigureSprite object with a reference to the game instance
+    # Sets up attributes related to the stick figure's movement, animation, and collision detection
         Sprite.__init__(self, game)
         self.image = pygame.image.load("figure-L1.png")  
         self.image = pygame.transform.scale(self.image, (50, 50))  
@@ -253,6 +274,8 @@ class StickFigureSprite(Sprite):
         self.rect.y += self.y
 
 class PlatformSprite(Sprite):
+# Subclasses of Sprite representing different types of platforms in the game
+# PlatformSprite represents normal platforms, while SlowPlatformSprite is for platforms that slow down the stick figure
     def __init__(self, game, image_path, x, y, width, height):
         Sprite.__init__(self, game)
         self.image = pygame.image.load(image_path)
@@ -264,6 +287,8 @@ class SlowPlatformSprite(PlatformSprite):
     pass
 
 class DoorSprite(Sprite):
+# Subclass of Sprite representing the door in the game that marks the end of the level
+# Contains methods for opening and closing the door
     def __init__(self, game, x, y, width, height):
         Sprite.__init__(self, game)
         self.closed_door = pygame.image.load("door1.png")
@@ -280,23 +305,32 @@ class DoorSprite(Sprite):
         self.image = self.closed_door
 
 def within_x(co1, co2):
+# Checks if two objects are within each other's x-coordinate range
     return (co1.x1 > co2.x1 and co1.x1 < co2.x2) or (co1.x2 > co2.x1 and co1.x2 < co2.x2) or (co2.x1 > co1.x1 and co2.x1 < co1.x2) or (co2.x2 > co1.x1 and co2.x2 < co1.x1)
 
 def within_y(co1, co2):
+# Checks if two objects are within each other's y-coordinate range
     return (co1.y1 > co2.y1 and co1.y1 < co2.y2) or (co1.y2 > co2.y1 and co1.y2 < co2.y2) or (co2.y1 > co1.y1 and co2.y1 < co1.y2) or (co2.y2 > co1.y1 and co2.y2 < co1.y1)
 
+# Helper functions to check if two objects are within each other's x or y coordinates
+# Functions to check for collisions between different sides of two objects
 def collided_left(co1, co2):
+# Checks if the left side of one object collides with the right side of another object
     return within_y(co1, co2) and co1.x1 <= co2.x2 and co1.x1 >= co2.x1
 
 def collided_right(co1, co2):
+# Checks if the right side of one object collides with the left side of another object
     return within_y(co1, co2) and co1.x2 >= co2.x1 and co1.x2 <= co2.x2
 
 def collided_top(co1, co2):
+# Checks if the top side of one object collides with the bottom side of another object
     return within_x(co1, co2) and co1.y1 <= co2.y2 and co1.y1 >= co2.y1
 
 def collided_bottom(y, co1, co2):
+# Checks if the bottom side of one object collides with the top side of another object
     y_calc = co1.y2 + y
     return within_x(co1, co2) and y_calc >= co2.y1 and y_calc <= co2.y2
 
+# Creates an instance of the GameSystem class and starts the main game loop
 g = GameSystem()
 g.main()
