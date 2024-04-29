@@ -6,7 +6,7 @@ Welcome to Sky Jumper! This user manual will guide you through the steps to run 
 ## System Requirements
 Before running Sky Jumper, ensure that you have the following requirements met:
 - Python installed on your system
-- Pygame library installed (`pip install pygame`)
+- Pygame library installed (`pip3 install pygame`)
 - Game assets (images and sounds) downloaded and placed in the same directory as the Python script
 
 ## Running the Game
